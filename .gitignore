@@ -6,3 +6,4 @@
 **/*.txt
 !requirements.txt
 example.py
+__pycache__
