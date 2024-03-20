@@ -4,6 +4,9 @@ import mysql.connector
 database_name = 'bank'
 table_name = 'account'
 
+db = None
+cursor = None
+
 
 def connect_db(username, password):
     global db
@@ -17,7 +20,7 @@ def create_cursor():
 
 
 def create_database():
-    cursor.execute("CREATE DATABASE IF NOT EXISTS " + database_name)
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {database_name}")
 
 
 def show_all_databases():
@@ -28,20 +31,20 @@ def show_all_databases():
 
 def create_table():
     cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS {} (
+        f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
             id INT AUTO_INCREMENT PRIMARY KEY,
             email VARCHAR(255),
             balance INT
         )
-        """.format(table_name)
+        """
     )
 
 
 def show_all_tables():
     cursor.execute("SHOW TABLES")
-    for table in cursor:
-        print(table)
+    for database in cursor:
+        print(database)
 
 
 def insert_one_record(email, balance):
@@ -67,23 +70,13 @@ def insert_many(list_of_email_balance_tuples):
 
 
 def show_all_records():
-    cursor.execute("SELECT * FROM {}".format(table_name))
+    cursor.execute(f"SELECT * FROM {table_name}")
     records = cursor.fetchall()  # 'records' is a list of tuples
     for record in records:
         print(f"id = {record[0]} | email = {record[1]} | balance = {record[2]}")
 
 
-connect_db('root', 'rootroot')
-create_cursor()
-# create_database()
-# show_all_databases()
-# create_table()
-# show_all_tables()
-# insert_one_record(table_name, 'john@example.com', 100)
-insert_many([
-    ('tyler@example.com', 2000),
-    ('peter@example.com', 5000),
-    ('eric@example.com', 10000),
-    ('mike@example.com', 15000)
-])
-show_all_records()
+def delete_all_records():
+    cursor.execute(f"DELETE FROM {table_name}")
+    db.commit()
+    print(f"No. of Records deleted: {cursor.rowcount}")

@@ -4,6 +4,7 @@ import mysql.connector
 database_name = 'bank'
 table_name = 'account'
 
+db = None
 
 def connect_db(username, password):
     global db
@@ -17,7 +18,7 @@ def create_cursor():
 
 
 def create_database():
-    cursor.execute("CREATE DATABASE IF NOT EXISTS " + database_name)
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {database_name}")
 
 
 def show_all_databases():
@@ -28,13 +29,13 @@ def show_all_databases():
 
 def create_table():
     cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS {} (
+        f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
             id INT AUTO_INCREMENT PRIMARY KEY,
             email VARCHAR(255),
             balance INT
         )
-        """.format(table_name)
+        """
     )
 
 
@@ -45,7 +46,7 @@ def show_all_tables():
 
 
 def insert_one_record(email, balance):
-    sql_query = "INSERT INTO {} (email, balance) VALUES (%s, %s)".format(table_name)
+    sql_query = f"INSERT INTO {table_name} (email, balance) VALUES (%s, %s)"
     values = (email, balance)
     cursor.execute(sql_query, values)
     db.commit()  # NOTE: no records will be inserted if you don't commit
@@ -60,20 +61,20 @@ def insert_many(list_of_email_balance_tuples):
 
     # ----- BETTER WAY -----
 
-    sql = "INSERT INTO {} (email, balance) VALUES (%s, %s)".format(table_name)
+    sql = f"INSERT INTO {table_name} (email, balance) VALUES (%s, %s)"
     cursor.executemany(sql, list_of_email_balance_tuples)
     db.commit()
     print(f"No. of Records inserted: {cursor.rowcount}")
 
 
 def show_all_records():
-    cursor.execute("SELECT * FROM {}".format(table_name))
+    cursor.execute(f"SELECT * FROM {table_name}")
     records = cursor.fetchall()  # 'records' is a list of tuples
     for record in records:
         print(f"id = {record[0]} | email = {record[1]} | balance = {record[2]}")
 
 def delete_all_records():
-    cursor.execute("DELETE FROM {}".format(table_name))
+    cursor.execute(f"DELETE FROM {table_name}")
     db.commit()
     print(f"No. of Records deleted: {cursor.rowcount}")
 

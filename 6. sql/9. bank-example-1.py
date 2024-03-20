@@ -17,7 +17,7 @@ def create_cursor():
 
 
 def create_database():
-    cursor.execute("CREATE DATABASE IF NOT EXISTS " + database_name)
+    cursor.execute("CREATE DATABASE IF NOT EXISTS bank")
 
 
 def show_all_databases():
@@ -28,13 +28,13 @@ def show_all_databases():
 
 def create_table():
     cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS {} (
+        f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
             id INT AUTO_INCREMENT PRIMARY KEY,
             email VARCHAR(255),
             balance INT
         )
-        """.format(table_name)
+        """
     )
 
 
@@ -67,23 +67,53 @@ def insert_many(list_of_email_balance_tuples):
 
 
 def show_all_records():
-    cursor.execute("SELECT * FROM {}".format(table_name))
+    cursor.execute(f"SELECT * FROM {table_name}")
     records = cursor.fetchall()  # 'records' is a list of tuples
     for record in records:
         print(f"id = {record[0]} | email = {record[1]} | balance = {record[2]}")
+
+
+def delete_all_records():
+    cursor.execute(f"DELETE FROM {table_name}")
+    db.commit()
+    print(f"No. of Records deleted: {cursor.rowcount}")
+
+
+def deposit_money(email, amount):
+    sql = f"UPDATE {table_name} SET balance = balance + %s WHERE email = %s"
+    values = (amount, email)
+    cursor.execute(sql, values)
+    db.commit()  # NOTE: no records will be inserted if you don't commit
+    print(f"No. of Records updated: {cursor.rowcount}")
+
+
+def withdraw_money(email, amount):
+    sql = f"UPDATE {table_name} SET balance = balance - %s WHERE email = %s"
+    values = (amount, email)
+    cursor.execute(sql, values)
+    db.commit()  # NOTE: no records will be inserted if you don't commit
+    print(f"No. of Records updated: {cursor.rowcount}")
 
 
 connect_db('root', 'rootroot')
 create_cursor()
 # create_database()
 # show_all_databases()
-# create_table()
+# create_table(table_name)
 # show_all_tables()
 # insert_one_record(table_name, 'john@example.com', 100)
-insert_many([
-    ('tyler@example.com', 2000),
-    ('peter@example.com', 5000),
-    ('eric@example.com', 10000),
-    ('mike@example.com', 15000)
-])
+# insert_many([
+#     ('tyler@example.com', 2000),
+#     ('peter@example.com', 5000),
+#     ('eric@example.com', 10000),
+#     ('mike@example.com', 15000),
+# ])
+
+# show_all_records()
+
+deposit_money("mike@example.com", 5000)
+withdraw_money("mike@example.com", 10000)
+
 show_all_records()
+
+delete_all_records()

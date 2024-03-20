@@ -1,0 +1,1 @@
+f = open('sample.txt', 'x')     # 'x' stands for create. Throws error if file is already created.
