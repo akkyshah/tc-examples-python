@@ -1,0 +1,9 @@
+.idea
+.DS_Store
+*.db
+**/*.db
+**/*.csv
+**/*.txt
+!requirements.txt
+example.py
+__pycache__
